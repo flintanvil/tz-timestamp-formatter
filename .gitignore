@@ -1,0 +1,5 @@
+/bin/
+/tz-timestamp-formatter
+*.test
+*.out
+.DS_Store
