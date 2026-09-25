@@ -61,5 +61,4 @@ the roadmap below.
 ## Status
 
 Early skeleton. The parser handles a fixed list of layouts; it doesn't yet
-take a target output timezone, doesn't handle named zone abbreviations, and
-has no test suite yet.
+take a target output timezone and doesn't handle named zone abbreviations.
