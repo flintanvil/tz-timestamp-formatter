@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestClean(t *testing.T) {
 	cases := []struct {
@@ -56,6 +59,37 @@ func TestFormatTimestamp(t *testing.T) {
 			}
 			if got != tc.want {
 				t.Errorf("FormatTimestamp(%q) = %q, want %q", tc.in, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestFormatTimestampIn(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		zone string
+		want string
+	}{
+		{"UTC stays Z", "2026-09-21 09:00:00 -0500", "UTC", "2026-09-21T14:00:00Z"},
+		{"daylight time zone", "2026-09-21T14:30:00Z", "America/New_York", "2026-09-21T10:30:00-04:00"},
+		{"standard time zone", "2026-01-21T14:30:00Z", "America/New_York", "2026-01-21T09:30:00-05:00"},
+		{"half hour offset", "2026-09-21T14:30:00Z", "Asia/Kolkata", "2026-09-21T20:00:00+05:30"},
+		{"input offset converted", "2026-09-21 09:00:00-05:00", "Europe/Berlin", "2026-09-21T16:00:00+02:00"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			loc, err := time.LoadLocation(tc.zone)
+			if err != nil {
+				t.Fatalf("LoadLocation(%q): %v", tc.zone, err)
+			}
+			got, err := FormatTimestampIn(tc.in, loc)
+			if err != nil {
+				t.Fatalf("FormatTimestampIn(%q) returned error: %v", tc.in, err)
+			}
+			if got != tc.want {
+				t.Errorf("FormatTimestampIn(%q, %s) = %q, want %q", tc.in, tc.zone, got, tc.want)
 			}
 		})
 	}

@@ -52,6 +52,20 @@ any line fails, the process exits with status 1.
 
 Blank lines are skipped. Everything else is treated as one timestamp.
 
+## Output zone
+
+Output is UTC by default. `--output-tz` takes an IANA zone name and prints
+every timestamp in that zone with its offset at that instant:
+
+```
+$ echo 2026-09-21T14:30:00Z | ./tzfmt --output-tz America/New_York
+2026-09-21T10:30:00-04:00
+```
+
+Flags go before file names. An unknown zone name exits with status 2
+before any input is read. The zone database is embedded in the binary, so
+this works without system tzdata.
+
 ## What counts as UTC
 
 If a line has no offset or `Z` at all (e.g. `2026-09-21 14:30:00`), it's
@@ -60,5 +74,6 @@ the roadmap below.
 
 ## Status
 
-Early skeleton. The parser handles a fixed list of layouts; it doesn't yet
-take a target output timezone and doesn't handle named zone abbreviations.
+Early. The parser handles a fixed list of layouts; it doesn't yet let you
+say what zone offset-less input is in, and doesn't handle named zone
+abbreviations.

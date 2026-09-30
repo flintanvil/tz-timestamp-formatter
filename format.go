@@ -50,6 +50,12 @@ func clean(s string) string {
 // RFC3339 in UTC. Inputs with no zone or offset are assumed to already be
 // UTC, matching how Go's time.Parse treats a layout with no zone field.
 func FormatTimestamp(raw string) (string, error) {
+	return FormatTimestampIn(raw, time.UTC)
+}
+
+// FormatTimestampIn is FormatTimestamp with the output shifted into loc.
+// Parsing is unaffected; only the rendered offset changes.
+func FormatTimestampIn(raw string, loc *time.Location) (string, error) {
 	cleaned := clean(raw)
 	if cleaned == "" {
 		return "", fmt.Errorf("empty input")
@@ -57,7 +63,7 @@ func FormatTimestamp(raw string) (string, error) {
 
 	for _, layout := range layouts {
 		if t, err := time.Parse(layout, cleaned); err == nil {
-			return t.UTC().Format(time.RFC3339), nil
+			return t.In(loc).Format(time.RFC3339), nil
 		}
 	}
 
